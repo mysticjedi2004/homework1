@@ -1,3 +1,7 @@
+#Sundaes Sunday
+#Rory Matson
+#All images are from Adobe Stock
+
 import pygame, random
 
 #Initialize pygame
@@ -16,7 +20,7 @@ clock = pygame.time.Clock()
 #Set game values
 PLAYER_STARTING_ICK = 5
 STARTING_VELOCITY = 1
-ACCERLATION = 1
+ACCERLATION = .35
 
 #Class with my image properties
 class Myimage:
@@ -28,20 +32,14 @@ class Myimage:
         random.seed(None)
         self.rect.x = random.randint(0,WINDOW_WIDTH - 100)
         self.rect.y = random.randint(0,WINDOW_HEIGHT - 100)
-        self.dx = random.choice([-1, 1])
-        self.dy = random.choice([-1, 1])
+        self.dx = random.choice([-0.75, 1])
+        self.dy = random.choice([-0.75, 1])
     velocity = STARTING_VELOCITY
     #image movement
     def move(self):
         self.rect.x += self.dx*self.velocity
         self.rect.y += self.dy*self.velocity
 
-        #Bounce the images off the edges of the display
-        if self.rect.left <= 0 or self.rect.right >= WINDOW_WIDTH:
-            self.dx = -1*self.dx
-        if self.rect.top <=  0 or self.rect.bottom >= WINDOW_HEIGHT:
-            self.dy = -1*self.dy
-#scores
 yum = 0
 ick = PLAYER_STARTING_ICK
 
@@ -97,11 +95,15 @@ continue_rect.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 64)
 #Set sound and music
 click_sound = pygame.mixer.Sound("correct.wav")
 miss_sound = pygame.mixer.Sound("wrong.wav")
-pygame.mixer.music.load("Truck1.wav")
-pygame.mixer.music.load("Truck2.wav")
-pygame.mixer.music.load("Truck3.wav")
-pygame.mixer.music.load("Truck4.wav")
-pygame.mixer.music.load("Truck5.wav")
+truck1 = pygame.mixer.music.load("Truck1.wav")
+truck2 = pygame.mixer.music.load("Truck2.wav")
+truck3 = pygame.mixer.music.load("Truck3.wav")
+truck4 = pygame.mixer.music.load("Truck4.wav")
+truck5 = pygame.mixer.music.load("Truck5.wav")
+
+#Playing the background track
+pygame.mixer.music.play(-1, 0.0)
+pygame.mixer.music.set_volume(.095)
 
 #Set images
 background_image = pygame.transform.scale(pygame.image.load("background.png"), (WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -111,7 +113,6 @@ background_rect.topleft = (0, 0)
 
 
 #The main game loop
-pygame.mixer.music.play(-1, 0.0)
 running = True
 while running:
     #Check to see if the user wants to quit
@@ -133,8 +134,6 @@ while running:
                 for i in items_list:
                     i.velocity += ACCERLATION
                 
-
-
                 #The object is moved
                 previous_dx = object.dx
                 previous_dy = object.dy
@@ -153,6 +152,20 @@ while running:
     #Ensuring that all of the images are moving
     for i in items_list:
         i.move()
+     #Bounce the images off the edges of the display
+        if i.rect.left < 0 or i.rect.right > WINDOW_WIDTH - 1:
+            i.dx = -1*i.dx
+            if i.rect.right > WINDOW_WIDTH - 1:
+                i.rect.right = WINDOW_WIDTH - 1
+            if i.rect.left < 0:
+                i.rect.left = 0
+        if i.rect.top <  0 or i.rect.bottom > WINDOW_HEIGHT - 1:
+            i.dy = -1*i.dy
+            if i.rect.top > WINDOW_HEIGHT - 1:
+                i.rect.right = WINDOW_HEIGHT - 1
+            if i.rect.bottom < 0:
+                i.rect.left = 0
+
         
     #Updating the game HUB
     score_text = font.render("Yum: " + str(yum), True, SAGE)
